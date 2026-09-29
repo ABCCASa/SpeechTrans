@@ -1,84 +1,78 @@
 # SpeechTrans
 
-A simple real-time speech recognition and translation tool.
+SpeechTrans is a local speech transcription and translation tool with a React web interface and a Python backend. It transcribes English audio with Whisper and translates the text into Simplified Chinese with NLLB.
 
-SpeechTrans captures microphone audio, transcribes English speech using Whisper, and translates the transcription into Simplified Chinese.
+Use it to follow English conversations, lectures, or audio played through an available recording device. Select a microphone or an operating-system-provided loopback input, such as Stereo Mix. System audio capture requires such an input to be available; selecting a normal microphone does not directly capture computer playback.
 
-## Features
 
-* Real-time microphone speech recognition
-* English speech-to-text
-* English-to-Chinese translation
-* Real-time transcription and translation display
-* Automatic transcript saving
-* CUDA GPU acceleration when available
+## Preview
 
-## How It Works
+![SpeechTrans web interface showing English transcription and Chinese translation](images/speechtrans-preview.png)
 
-```text id="p4g6cw"
-Microphone
-    ↓
-FFmpeg Audio Capture
-    ↓
-Whisper Speech Recognition
-    ↓
-English Transcription
-    ↓
-NLLB Translation
-    ↓
-Chinese Translation
-    ↓
-Terminal Display + Transcript File
+## Installation
+
+The commands below use **Windows PowerShell**. Download or clone the repository, then open a terminal in its root directory. Installation commands download dependencies; run them before starting the application.
+
+### 1. Prerequisites
+
+- Python **3.11 or later**, with a version supported by the selected PyTorch and NumPy packages.
+- [Node.js](https://nodejs.org/) **22.12 or later**.
+- [FFmpeg](https://ffmpeg.org/download.html).
+
+### 2. Backend dependencies
+
+From the repository root, create a virtual environment and install the dependencies in `requirements.txt`:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt 
 ```
 
-SpeechTrans continuously captures microphone audio with FFmpeg. Whisper converts the audio into English text, then NLLB translates the transcription into Simplified Chinese. The results are displayed in real time and saved to the `output/` folder.
+### 3. FFmpeg
 
-## Usage
+On Windows, download a build containing `ffmpeg.exe`, put it in `backend/ffmpeg/ffmpeg.exe`.
 
-### 1. Install Dependencies
 
-```bash id="2os8za"
-pip install -r requirements.txt
+### 4. Frontend dependencies
+
+From the repository root:
+
+```powershell
+cd frontend
+npm ci
 ```
 
-### 2. Install FFmpeg
+This installs the frontend dependencies from `package-lock.json`. Node.js.
 
-FFmpeg is not included in this repository. Download FFmpeg separately and place `ffmpeg.exe` in the `ffmpeg` folder:
+## Start the application
 
-```text id="8ssijw"
-SpeechTrans/
-├── ffmpeg/
-│   └── ffmpeg.exe
-├── output/
-├── main.py
-├── requirements.txt
-└── run.bat
+Keep two terminals open. Start each set of commands from the repository root.
+
+### Terminal 1: backend
+
+```powershell
+cd backend
+..\.venv\Scripts\python.exe main.py
 ```
 
-Only `ffmpeg.exe` is required. `ffplay.exe` and `ffprobe.exe` are not needed.
+Wait for the model loading to finish and Uvicorn to report that the server is running:
 
-### 3. Run
-
-```bash id="q5gngv"
-python main.py
+```text
+http://127.0.0.1:8080
 ```
 
-Or on Windows:
+### Terminal 2: frontend
 
-```text id="gvkx8p"
-run.bat
+```powershell
+cd frontend
+npm run dev
 ```
 
-Select your microphone when prompted. SpeechTrans will start recognizing speech and displaying the transcription and Chinese translation in real time.
+Open:
 
-Example:
-
-```text id="9mocvu"
-Select your audio device:
-[0] Microphone (Realtek Audio)
-[1] Microphone (USB Audio Device)
-
-> 1
+```text
+http://localhost:5173
 ```
 
-Transcripts are automatically saved in the `output/` folder.
+

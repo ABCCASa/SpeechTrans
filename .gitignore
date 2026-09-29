@@ -1,14 +1,2 @@
-# FFmpeg binaries
-/ffmpeg/*
-!/ffmpeg/.gitkeep
-
-# Python cache
-__pycache__/
-*.py[cod]
-
-# IDE
 .idea/
-
-# Output files
-/output/*
-!/output/.gitkeep
+.git/
