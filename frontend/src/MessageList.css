@@ -1,0 +1,25 @@
+.message-list { flex: 1; min-height: 0; overflow-y: auto; overflow-wrap: anywhere; padding: 4px 26px 18px; scrollbar-width: thin; scrollbar-color: #c5d0c4 transparent; }
+.message-list:focus-visible { outline-offset: -4px; }
+.empty-state { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 12px; text-align: center; }
+.empty-state p { font-size: 12px; color: var(--muted); line-height: 1.8; }
+.message { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-bottom: 1px solid #edf0e9; }
+.message:last-child { border-bottom-color: transparent; }
+.session-divider { width: 100%; margin: 8px 0; border: 0; border-top: 1px solid #bacdb7; }
+.message:has(+ .session-divider) { border-bottom-color: transparent; }
+.message-meta { display: flex; flex-direction: column; align-items: flex-start; padding-top: 3px; }
+.message-time { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: #6f7f72; font-variant-numeric: tabular-nums; }
+.message-original { font-size: 16px; line-height: 1.45; color: #263f36; white-space: pre-wrap; }
+.message-translation { margin-top: 2px; padding-left: 6px; border-left: 2px solid #b7cdb6; color: #597459; font-size: 14px; line-height: 1.45; white-space: pre-wrap; }
+.message-temporary { position: relative; isolation: isolate; border-bottom-color: transparent; border-radius: 8px; }
+.message-temporary::before { content: ""; position: absolute; inset: 0 -8px; z-index: -1; border: 1px dashed #bacdb7; border-radius: 8px; background: #f2f6ee; pointer-events: none; }
+.message-temporary .message-original { color: #205c43; }
+@media (max-width: 640px) {
+  .message-list { padding: 0 16px 16px; }
+  .message { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 6px 0; }
+  .message-meta { flex-direction: row; align-items: center; padding-top: 0; }
+  .message-original { font-size: 15px; }
+  .message-translation { font-size: 13px; }
+  .empty-state { padding: 24px 0; }
+}
+.message-list--no-time .message { grid-template-columns: minmax(0, 1fr); }
+.message-list--pip { height: 100dvh; padding: 8px 14px; }
