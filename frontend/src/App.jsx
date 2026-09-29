@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState, useLayoutEffect} from "react";
 import './App.css'
 import Message from "./Message";
-import { cloneElement } from "react";
+import PictureInPicture from "./PictureInPicture";
 import { locales } from "./locales";
 import { LanguageContext } from "./LanguageContext";
 const STATE = {Loading: "Loading", Open: "Open", Close: "Close"}
@@ -17,6 +17,7 @@ function App() {
     const [state, setState] = useState(STATE.Close)
     const [messages, setMessages] = useState([]);
     const [tempMessage, setTempMessage] = useState(null);
+    const [pipTarget, setPipTarget] = useState(null);
     const [selectedDeviceId, setSelectedDeviceId] = useState("")
     const [audioDevices, setAudioDevices] = useState([]);
 
@@ -24,7 +25,46 @@ function App() {
     const messageBoxRef = useRef(null);
     const followBottomRef = useRef(true);
     const nextMessageId = useRef(0);
+    const pipWindowRef = useRef(null);
+    const pipOpeningRef = useRef(false);
 
+    useEffect(() => () => {
+        pipWindowRef.current?.close();
+    }, []);
+
+    async function openPictureInPicture() {
+        if (!window.documentPictureInPicture) {
+            window.alert(t.pipUnsupported);
+            return;
+        }
+
+        if (pipOpeningRef.current) return;
+        pipOpeningRef.current = true;
+        try {
+            if (pipWindowRef.current && !pipWindowRef.current.closed) {
+                pipWindowRef.current.focus();
+                return;
+            }
+            const pipWindow = await window.documentPictureInPicture.requestWindow({
+                width: 540,
+                height: 240,
+                disallowReturnToOpener: true,
+            });
+            pipWindowRef.current = pipWindow;
+            pipWindow.addEventListener("pagehide", () => {
+                if (pipWindowRef.current === pipWindow) {
+                    pipWindowRef.current = null;
+                    setPipTarget(null);
+                }
+            }, { once: true });
+            setPipTarget(pipWindow.document.body);
+        } catch (error) {
+            console.error("Failed to open picture-in-picture:", error);
+            window.alert(t.pipFailed);
+        } finally {
+            pipOpeningRef.current = false;
+        }
+    }
     async function button_click() {
         if (state === STATE.Loading) return
         if (state === STATE.Open) {
@@ -76,20 +116,14 @@ function App() {
                 if (closeHandled) return;
                 const data = JSON.parse(event.data);
                 if (data.final_sentences.length > 0) {
-                    const newSegments = data.final_sentences.map((sentence) => (
-                        <Message key = {nextMessageId.current++} message={sentence}  temporary={false}/>
-                    ));
+                    const newSegments = data.final_sentences.map((sentence) => ({
+                        ...sentence,
+                        id: nextMessageId.current++,
+                        type: "message",
+                    }));
                     setMessages((prev) => [...prev, ...newSegments]);
                 }
-                const temp = data.temp_sentence;
-                if (temp == null)
-                {
-                    last_temp_message = null;
-                }
-                else
-                {
-                    last_temp_message = <Message key = {nextMessageId.current} message= {temp} temporary={true}/>;
-                }
+                last_temp_message = data.temp_sentence ?? null;
                 setTempMessage(last_temp_message)
             };
 
@@ -100,17 +134,18 @@ function App() {
                 if (recorder.state !== "inactive") recorder.stop();
                 stream.getTracks().forEach((track) => track.stop());
                 setState(STATE.Close)
-                const savedMessage = last_temp_message == null ? null : cloneElement(
-                    last_temp_message,
-                    { key: nextMessageId.current++, temporary: false }
-                );
-                const divider = <hr key={nextMessageId.current++} className="session-divider" />;
+                const savedMessage = last_temp_message == null ? null : {
+                    ...last_temp_message,
+                    id: nextMessageId.current++,
+                    type: "message",
+                };
+                const divider = { id: nextMessageId.current++, type: "divider" };
                 last_temp_message = null;
                 setTempMessage(null);
                 setMessages((prev) => {
                     const next = savedMessage == null ? prev : [...prev, savedMessage];
                     // Avoid empty or consecutive session separators.
-                    if (next.length === 0 || next[next.length - 1]?.type === "hr") return next;
+                    if (next.length === 0 || next[next.length - 1]?.type === "divider") return next;
                     return [...next, divider];
                 });
             }
@@ -157,6 +192,9 @@ function App() {
         <header className="app-header">
             <h1 className="brand"><img className="brand-mark" src={`${import.meta.env.BASE_URL}speechtrans.svg`} alt="" width="42" height="42" />SpeechTrans</h1>
             <div className="header-actions">
+            <button type="button" className="pip-button" onClick={openPictureInPicture}>
+                {t.pipOpen}
+            </button>
             <select
                 className="language-select"
                 aria-label={t.language}
@@ -222,11 +260,23 @@ function App() {
                     <p>{state === STATE.Open ? t.waitingForTranscript : t.emptyTranscript}</p>
                 </div>
             )}
-            {messages}
-           {tempMessage}
+            {messages.map((message) => message.type === "divider" ? (
+                <hr key={message.id} className="session-divider" />
+            ) : (
+                <Message key={message.id} message={message} />
+            ))}
+            {tempMessage != null && <Message message={tempMessage} temporary={true} />}
         </div>
         </section>
-    </main></LanguageContext.Provider>);
+    </main>
+        {pipTarget && <PictureInPicture
+            target={pipTarget}
+            messages={messages}
+            tempMessage={tempMessage}
+            recording={state === STATE.Open}
+            language={language}
+        />}
+    </LanguageContext.Provider>);
 }
 
 export default App

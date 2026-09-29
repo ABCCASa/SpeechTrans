@@ -1,0 +1,15 @@
+:root { color-scheme: light; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color: #263f36; background: #fffefa; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+p { margin: 0; }
+.pip-transcript { height: 100dvh; overflow-y: auto; overflow-wrap: anywhere; padding: 8px 14px; scrollbar-width: thin; scrollbar-color: #c5d0c4 transparent; }
+.pip-transcript:focus-visible { outline: 2px solid #399b83; outline-offset: -2px; }
+.message { padding: 6px 0; border-bottom: 1px solid #edf0e9; }
+.message:last-child, .message:has(+ .session-divider) { border-bottom-color: transparent; }
+.message-original { font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
+.message-translation { margin-top: 2px; font-size: 14px; line-height: 1.45; color: #597459; white-space: pre-wrap; }
+.message-temporary { position: relative; isolation: isolate; border-bottom-color: transparent; }
+.message-temporary::before { content: ""; position: absolute; inset: 0 -6px; z-index: -1; border-radius: 6px; background: #f2f6ee; pointer-events: none; }
+.message-temporary .message-original { color: #61775f; }
+.session-divider { margin: 8px 0; border: 0; border-top: 1px solid #bacdb7; }
+.pip-empty { color: #687b74; font-size: 13px; padding: 8px 0; }

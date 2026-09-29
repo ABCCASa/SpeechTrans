@@ -2,6 +2,8 @@
 .app-header, .brand, .status-badge, .panel-heading { display: flex; align-items: center; }
 .app-header { justify-content: space-between; gap: 16px; flex-shrink: 0; flex-wrap: wrap; }
 .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-left: auto; }
+.pip-button { min-height: 38px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 9px; background: #fffefa; color: var(--accent); font-size: 14px; }
+.pip-button:hover { background: #e9eee6; }
 .language-select { min-height: 38px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 9px; background: #fffefa; color: #29493e; font-size: 14px; }
 .brand { gap: 12px; font-size: 19px; font-weight: 750; letter-spacing: -.5px; }
 .brand-mark { display: grid; place-items: center; width: 42px; height: 42px; background: var(--accent); color: #e4f2d6; border-radius: 13px; font-size: 34px; line-height: 1; }
@@ -31,7 +33,7 @@
 .message-list:focus-visible { outline-offset: -4px; }
 .empty-state { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 12px; text-align: center; }
 .empty-state p { font-size: 12px; color: var(--muted); line-height: 1.8; }
-.message { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-bottom: 1px solid #edf0e9; }
+.message { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-bottom: 1px solid #edf0e9; }
 .message:last-child { border-bottom: 0; }
 .session-divider { width: 100%; margin: 8px 0; border: 0; border-top: 1px solid #bacdb7; }
 .message:has(+ .session-divider) { border-bottom: 0; }

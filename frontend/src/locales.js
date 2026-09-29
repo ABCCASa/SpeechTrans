@@ -1,6 +1,9 @@
 export const locales = {
     zh: {
         language: "界面语言",
+        pipOpen: "画中画",
+        pipUnsupported: "当前浏览器或页面环境不支持文档画中画。请使用支持此功能的桌面浏览器，并通过 localhost 或 HTTPS 访问。",
+        pipFailed: "无法打开画中画窗口，请查看浏览器控制台中的错误信息。",
         recording: "正在录音",
         processing: "处理中",
         idle: "未在录音",
@@ -19,6 +22,9 @@ export const locales = {
     },
     en: {
         language: "Interface language",
+        pipOpen: "Picture-in-picture",
+        pipUnsupported: "Document picture-in-picture is unavailable. Use a supported desktop browser on localhost or HTTPS.",
+        pipFailed: "Could not open picture-in-picture. Check the browser console for details.",
         recording: "Recording",
         processing: "Processing",
         idle: "Idle",
