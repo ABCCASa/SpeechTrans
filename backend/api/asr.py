@@ -1,6 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from services.audio_recorder import AudioRecorder
-from services.automatic_speech_recognition import process as asr_process
+from services.speech_trans_pipline import process as asr_process
 import asyncio
 
 router = APIRouter()

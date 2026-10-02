@@ -16,7 +16,7 @@ class AudioRecorder:
         self._sample_rate = sample_rate
         self._audio = np.empty(0, dtype=np.float32)
         self._offset = 0.0
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self._process = subprocess.Popen(
             [
                 "ffmpeg",
@@ -39,6 +39,10 @@ class AudioRecorder:
         )
         self._thread.start()
 
+    @property
+    def is_disposed(self):
+        return self._disposed
+
     def _read_audio(self):
         while not self._disposed:
             data = self._process.stdout.read(6400)
@@ -52,7 +56,6 @@ class AudioRecorder:
                     self._audio = np.concatenate((self._audio, audio))
                 self._has_new_chunk = True
 
-
     def add_audio_chunk(self, chunk):
         if self._disposed:
             return
@@ -62,6 +65,25 @@ class AudioRecorder:
     def has_new_chunk(self):
         with self._lock:
             return self._has_new_chunk
+
+    def audio_second_length(self):
+        with self._lock:
+            return self._audio.size / self._sample_rate
+
+    def audio_sample_length(self):
+        with self._lock:
+            return self._audio.size
+
+    def pop_audio(self, samples):
+        with self._lock:
+            if self._audio.size < samples:
+                return None
+            output_audio = self._audio[:samples]
+            self._audio = self._audio[samples:]
+            actual_seconds = samples / self._sample_rate
+            self._offset += actual_seconds
+            return output_audio
+
 
     def get_audio(self):
         with self._lock:
@@ -86,4 +108,13 @@ class AudioRecorder:
         if self._disposed:
             return
         self._disposed = True
+        try:
+            self._process.stdin.close()
+        except Exception:
+            pass
+
         self._process.kill()
+        self._process.wait()
+
+        if self._thread.is_alive():
+            self._thread.join()

@@ -1,6 +1,6 @@
 # SpeechTrans
 
-SpeechTrans is a local speech transcription and translation tool with a React web interface and a Python backend. It transcribes English audio with Whisper and translates the text into Simplified Chinese with NLLB.
+SpeechTrans is a local speech transcription and translation tool with a React web interface and a Python backend. It transcribes English audio with Whisper or Parakeet and translates the text into Simplified Chinese with NLLB.
 
 Use it to follow English conversations, lectures, or audio played through an available recording device. Select a microphone or an operating-system-provided loopback input, such as Stereo Mix. System audio capture requires such an input to be available; selecting a normal microphone does not directly capture computer playback.
 
